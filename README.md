@@ -1,3 +1,3 @@
 # Electricity Of Lebanon
-This project aims to HELP PASS THE FUCKING COURSE
-And FYP 2.0
+### An IT Project Management Project
+This project aims to make an easy way to track your electricity usage, pay bills, check statuses and more.
