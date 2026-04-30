@@ -1,5 +1,7 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { PageContext } from '../contexts/PageContext';
+import { useTranslation } from '../hooks/useTranslation';
 import {
   DollarSign,
   Wallet,
@@ -86,6 +88,16 @@ export default function Finance() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(
     null
   );
+  const { currency } = useContext(PageContext);
+  const { t } = useTranslation();
+
+  const formatCurrency = (amountInLbp: number) => {
+    let convertedAmount = amountInLbp;
+    if (currency === 'USD') convertedAmount = amountInLbp / 89500;
+    else if (currency === 'EUR') convertedAmount = amountInLbp / 95000;
+    
+    return `${convertedAmount.toLocaleString(undefined, { maximumFractionDigits: currency === 'LBP' ? 0 : 2 })} ${currency}`;
+  };
 
   return (
     <div className="px-4 py-6 space-y-6 max-w-4xl mx-auto">
@@ -103,12 +115,12 @@ export default function Finance() {
               </div>
               <div>
                 <p className="text-emerald-100 text-sm">Current Balance</p>
-                <h2 className="text-3xl font-bold">45,000 LBP</h2>
+                <h2 className="text-3xl font-bold">{formatCurrency(45000)}</h2>
               </div>
             </div>
             <div className="text-right">
               <p className="text-emerald-100 text-sm">Outstanding</p>
-              <h3 className="text-2xl font-bold">12,800 LBP</h3>
+              <h3 className="text-2xl font-bold">{formatCurrency(12800)}</h3>
             </div>
           </div>
         </Card>
@@ -131,10 +143,10 @@ export default function Finance() {
           <TabsContent value="bills" className="space-y-4">
             <Card className="p-4 dark:bg-gray-800 dark:border-gray-700">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white">Billing Overview</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-white">{t('billBreakdown')}</h3>
                 <Button variant="ghost" size="sm">
                   <Download className="w-4 h-4 mr-2" />
-                  Export
+                  {t('downloadInvoice')}
                 </Button>
               </div>
 
@@ -179,7 +191,7 @@ export default function Finance() {
                           {bill.usage}
                         </td>
                         <td className="py-4 px-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          {bill.amount.toLocaleString()} LBP
+                          {formatCurrency(bill.amount)}
                         </td>
                         <td className="py-4 px-2 text-center">
                           {bill.status === "paid" ? (
@@ -320,7 +332,7 @@ export default function Finance() {
                           <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                             <p>1. Open your OMT app</p>
                             <p>2. Send to: EDL Account #03-12345</p>
-                            <p>3. Enter amount: 12,800 LBP</p>
+                            <p>3. Enter amount: {formatCurrency(12800)}</p>
                             <p>4. Reference: Your User ID</p>
                             <p className="font-semibold mt-2">Contact: +961 1 234 567</p>
                           </div>
@@ -329,7 +341,7 @@ export default function Finance() {
                           <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                             <p>1. Open your Wish Money app</p>
                             <p>2. Send to: EDL Merchant #WM-EDL-001</p>
-                            <p>3. Enter amount: 12,800 LBP</p>
+                            <p>3. Enter amount: {formatCurrency(12800)}</p>
                             <p>4. Reference: Your User ID</p>
                             <p className="font-semibold mt-2">Contact: +961 1 234 567</p>
                           </div>
@@ -338,7 +350,7 @@ export default function Finance() {
                           <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
                             <p>Visit any EDL office with:</p>
                             <p>• Your User ID: {sessionStorage.getItem("userId")}</p>
-                            <p>• Amount: 12,800 LBP</p>
+                            <p>• Amount: {formatCurrency(12800)}</p>
                             <p>• Valid ID card</p>
                             <p className="font-semibold mt-2">
                               Office Hours: Mon-Fri, 8:00 AM - 4:00 PM
@@ -392,9 +404,9 @@ export default function Finance() {
                         </div>
                         <div className="text-right">
                           <p className="text-xl font-bold text-gray-900 dark:text-white">
-                            {payment.amount.toLocaleString()}
+                            {formatCurrency(payment.amount).split(' ')[0]}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">LBP</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{currency}</p>
                           <div className="mt-1">
                             <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs">
                               <Check className="w-3 h-3" />

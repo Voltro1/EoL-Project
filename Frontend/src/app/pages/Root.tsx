@@ -17,7 +17,7 @@ export default function Root() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-300">
       <Header />
-      <main className="flex-1 overflow-hidden relative">
+      <main className="flex-1 overflow-y-auto relative pb-24">
         <Outlet />
       </main>
       <Navbar />

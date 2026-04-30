@@ -1,24 +1,29 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import { ArrowLeft, Check, Globe } from "lucide-react";
 import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
+import { PageContext } from "../../contexts/PageContext";
+import { useTranslation } from "../../hooks/useTranslation";
+import { Language as LanguageType } from "../../translations";
 
-const languages = [
-  { code: "en", name: "English", nativeName: "English" },
-  { code: "ar", name: "Arabic", nativeName: "العربية" },
-  { code: "fr", name: "French", nativeName: "Français" },
-  { code: "es", name: "Spanish", nativeName: "Español" },
-  { code: "de", name: "German", nativeName: "Deutsch" },
+const languages: { code: LanguageType, name: string, nativeName: string }[] = [
+  { code: "English", name: "English", nativeName: "English" },
+  { code: "Arabic", name: "Arabic", nativeName: "العربية" },
+  { code: "French", name: "French", nativeName: "Français" },
 ];
 
 export default function Language() {
   const navigate = useNavigate();
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const { language, setLanguage } = useContext(PageContext);
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageType>(language);
+  const { t } = useTranslation();
 
   const handleSave = () => {
-    alert(`Language changed to ${languages.find((l) => l.code === selectedLanguage)?.name}`);
+    setLanguage(selectedLanguage);
+    toast.success(`Language changed to ${languages.find((l) => l.code === selectedLanguage)?.name}`);
     navigate("/config");
   };
 
@@ -55,10 +60,10 @@ export default function Language() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Select Language
+                  {t('language')}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Choose your preferred language
+                  {t('preferences')}
                 </p>
               </div>
             </div>
@@ -108,7 +113,7 @@ export default function Language() {
             onClick={handleSave}
             className="w-full h-12 bg-emerald-500 hover:bg-emerald-600"
           >
-            Save Language
+            {t('saveChanges')}
           </Button>
         </motion.div>
       </div>

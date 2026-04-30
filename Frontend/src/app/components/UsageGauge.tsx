@@ -1,5 +1,7 @@
 import { motion } from "motion/react";
 import { useTheme } from "../contexts/ThemeContext";
+import { useContext } from "react";
+import { PageContext } from "../contexts/PageContext";
 
 interface UsageGaugeProps {
   value: number; // 0-100 percentage
@@ -28,6 +30,13 @@ export default function UsageGauge({
   // Needle and center dot colors adapt to theme
   const needleColor = theme === "dark" ? "#e5e7eb" : "#1f2937"; // light gray in dark mode, dark gray in light mode
   const backgroundArcColor = theme === "dark" ? "#374151" : "#e5e7eb"; // darker in dark mode
+
+  const { measurementUnit } = useContext(PageContext);
+  const isWatts = measurementUnit === "Watts";
+  
+  const displayCurrent = isWatts ? (currentKw * 1000).toFixed(0) : currentKw.toFixed(1);
+  const displayMax = isWatts ? (maxKw * 1000).toFixed(0) : maxKw;
+  const unitLabel = isWatts ? "W" : "kW";
 
   return (
     <div className="relative w-full max-w-xs mx-auto">
@@ -85,11 +94,11 @@ export default function UsageGauge({
       {/* Text Display */}
       <div className="text-center mt-4">
         <div className="text-4xl font-bold text-gray-900 dark:text-white mb-1">
-          {currentKw.toFixed(1)}
-          <span className="text-lg text-gray-500 dark:text-gray-400 ml-1">kW</span>
+          {displayCurrent}
+          <span className="text-lg text-gray-500 dark:text-gray-400 ml-1">{unitLabel}</span>
         </div>
         <div className="text-sm text-gray-500 dark:text-gray-400">
-          of {maxKw} kW maximum capacity
+          of {displayMax} {unitLabel} maximum capacity
         </div>
         <div className="mt-3 inline-flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-full">
           <div

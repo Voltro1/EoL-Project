@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { motion } from "motion/react";
+import { PageContext } from "../contexts/PageContext";
+import { useTranslation } from "../hooks/useTranslation";
 import { TrendingUp, TrendingDown, DollarSign, Zap } from "lucide-react";
 import UsageGauge from "../components/UsageGauge";
 import { Card } from "../components/ui/card";
@@ -19,6 +21,21 @@ const mockData = {
 export default function Home() {
   const [data, setData] = useState(mockData);
   const [animate, setAnimate] = useState(false);
+  const { currency, measurementUnit } = useContext(PageContext);
+  const { t } = useTranslation();
+
+  const formatCurrency = (amountInLbp: number) => {
+    let convertedAmount = amountInLbp;
+    if (currency === 'USD') convertedAmount = amountInLbp / 89500;
+    else if (currency === 'EUR') convertedAmount = amountInLbp / 95000;
+    
+    return `${convertedAmount.toLocaleString(undefined, { maximumFractionDigits: currency === 'LBP' ? 0 : 2 })} ${currency}`;
+  };
+
+  const isWatts = measurementUnit === "Watts";
+  const displayDailyUsage = isWatts ? (data.dailyUsage * 1000).toLocaleString() : data.dailyUsage;
+  const displayMonthlyUsage = isWatts ? (data.monthlyUsage * 1000).toLocaleString() : data.monthlyUsage.toLocaleString();
+  const energyUnitLabel = isWatts ? "Wh" : "kWh";
 
   useEffect(() => {
     setAnimate(true);
@@ -49,7 +66,7 @@ export default function Home() {
         <Card className="p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-emerald-100 text-sm">Dawle Status</p>
+              <p className="text-emerald-100 text-sm">{t('serviceStatus')}</p>
               <h2 className="text-3xl font-bold mt-1">
                 {data.status.toUpperCase()}
               </h2>
@@ -69,7 +86,7 @@ export default function Home() {
             </div>
           </div>
           <p className="text-emerald-100 text-sm">
-            Last updated: {data.lastUpdate}
+            {t('lastUpdated')}: {data.lastUpdate}
           </p>
         </Card>
       </motion.div>
@@ -81,7 +98,7 @@ export default function Home() {
         transition={{ delay: 0.2 }}
       >
         <Card className="p-8 dark:bg-gray-800 dark:border-gray-700">
-          <h3 className="text-center mb-6 text-gray-700 dark:text-gray-300">Current Usage</h3>
+          <h3 className="text-center mb-6 text-gray-700 dark:text-gray-300">{t('currentUsage')}</h3>
           <UsageGauge
             value={data.currentUsage}
             currentKw={data.currentKw}
@@ -104,7 +121,7 @@ export default function Home() {
             <div>
               <p className="text-sm text-blue-700 dark:text-blue-300">Available Credits</p>
               <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
-                {data.credits.toLocaleString()} LBP
+                {formatCurrency(data.credits)}
               </p>
             </div>
           </div>
@@ -123,19 +140,19 @@ export default function Home() {
             <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span className="text-xs text-gray-500 dark:text-gray-400">Daily Usage</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{data.dailyUsage}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">kWh today</p>
+          <p className="text-2xl font-bold text-gray-900 dark:text-white">{displayDailyUsage}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{energyUnitLabel} today</p>
         </Card>
 
         <Card className="p-5 dark:bg-gray-800 dark:border-gray-700">
           <div className="flex items-center gap-2 mb-2">
             <TrendingDown className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-            <span className="text-xs text-gray-500 dark:text-gray-400">Monthly Usage</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">{t('thisMonth')}</span>
           </div>
           <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {data.monthlyUsage.toLocaleString()}
+            {displayMonthlyUsage}
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">kWh this month</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{energyUnitLabel} this month</p>
         </Card>
       </motion.div>
 

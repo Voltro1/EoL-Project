@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useState, useRef, useEffect } from "react";
+import { useTranslation } from "../hooks/useTranslation";
 import {
   Zap,
   Send,
@@ -22,8 +23,8 @@ interface Message {
 }
 
 const quickActions = [
-  { id: 1, label: "Extra Help", icon: HelpCircle },
-  { id: 2, label: "Feedback", icon: MessageSquare },
+  { id: 1, labelKey: "contactSupport", icon: HelpCircle },
+  { id: 2, labelKey: "helpImprove", icon: MessageSquare },
 ];
 
 const botResponses: { [key: string]: string } = {
@@ -47,6 +48,7 @@ export default function Services() {
       timestamp: new Date(),
     },
   ]);
+  const { t } = useTranslation();
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -118,10 +120,10 @@ export default function Services() {
     }, 1000 + Math.random() * 1000);
   };
 
-  const handleQuickAction = (action: string) => {
-    if (action === "Extra Help") {
+  const handleQuickAction = (actionKey: string) => {
+    if (actionKey === "contactSupport") {
       setIsContactModalOpen(true);
-    } else if (action === "Feedback") {
+    } else if (actionKey === "helpImprove") {
       setIsFeedbackModalOpen(true);
     }
   };
@@ -179,13 +181,13 @@ export default function Services() {
               {quickActions.map((action) => (
                 <Button
                   key={action.id}
-                  onClick={() => handleQuickAction(action.label)}
+                  onClick={() => handleQuickAction(action.labelKey)}
                   variant="secondary"
                   size="sm"
                   className="bg-white/20 hover:bg-white/30 text-white border-0 w-full justify-start text-xs h-8"
                 >
                   <action.icon className="w-3.5 h-3.5 mr-2" />
-                  {action.label}
+                  {t(action.labelKey as any)}
                 </Button>
               ))}
             </div>

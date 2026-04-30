@@ -1,7 +1,9 @@
 import { Bell, Zap } from "lucide-react";
 import { motion } from "motion/react";
+import { useTranslation } from "../hooks/useTranslation";
 
 export default function Header() {
+  const { t } = useTranslation();
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 transition-colors duration-300">
       {/* Announcement Banner */}
@@ -12,7 +14,7 @@ export default function Header() {
       >
         <Bell className="w-4 h-4 flex-shrink-0" />
         <p className="truncate">
-          Scheduled maintenance on March 1st from 2:00 AM - 6:00 AM
+          {t('scheduledMaintenanceMessage')}
         </p>
       </motion.div>
 
@@ -24,13 +26,13 @@ export default function Header() {
           </div>
           <div>
             <h1 className="font-semibold text-gray-900 dark:text-white">EDL</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Électricité du Liban</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t('edlFull')}</p>
           </div>
         </div>
 
         {/* User Info */}
         <div className="text-right">
-          <p className="text-xs text-gray-500 dark:text-gray-400">User ID</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{t('userId')}</p>
           <p className="text-sm font-medium text-gray-900 dark:text-white">
             {sessionStorage.getItem("userId") || "LEB-12345"}
           </p>

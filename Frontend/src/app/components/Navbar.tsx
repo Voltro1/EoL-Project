@@ -1,18 +1,22 @@
 import { NavLink } from "react-router";
 import { Home, DollarSign, Zap, Settings } from "lucide-react";
+import { useTranslation } from "../hooks/useTranslation";
+import { TranslationKey } from "../translations";
 
-const navItems = [
-  { path: "/", label: "Home", icon: Home },
-  { path: "/finance", label: "Finance", icon: DollarSign },
-  { path: "/services", label: "Service", icon: Zap },
-  { path: "/config", label: "Config", icon: Settings },
+const navItems: { path: string, labelKey: TranslationKey, icon: any }[] = [
+  { path: "/", labelKey: "home", icon: Home },
+  { path: "/finance", labelKey: "finance", icon: DollarSign },
+  { path: "/services", labelKey: "service", icon: Zap },
+  { path: "/config", labelKey: "config", icon: Settings },
 ];
 
 export default function Navbar() {
+  const { t } = useTranslation();
+
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50 transition-colors duration-300">
       <div className="flex items-center justify-around px-2 py-2">
-        {navItems.map(({ path, label, icon: Icon }) => (
+        {navItems.map(({ path, labelKey, icon: Icon }) => (
           <NavLink
             key={path}
             to={path}
@@ -28,7 +32,7 @@ export default function Navbar() {
             {({ isActive }) => (
               <>
                 <Icon className="w-5 h-5" />
-                <span className="text-xs font-medium">{label}</span>
+                <span className="text-xs font-medium">{t(labelKey)}</span>
               </>
             )}
           </NavLink>

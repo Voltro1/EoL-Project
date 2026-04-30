@@ -1,11 +1,13 @@
 import { motion } from "motion/react";
 import { useNavigate } from "react-router";
+import { useTranslation } from "../../hooks/useTranslation";
 import { ArrowLeft, Zap, Info, Code, Award } from "lucide-react";
 import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 
 export default function About() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
@@ -21,7 +23,7 @@ export default function About() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            About
+            {t('about')}
           </h1>
         </div>
       </div>
@@ -63,13 +65,10 @@ export default function About() {
               </div>
               <div>
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  About This App
+                  {t('aboutThisApp')}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                  The EDL App is a comprehensive electricity monitoring platform
-                  designed for Lebanese citizens to track their power usage,
-                  manage billing, and stay informed about their electricity
-                  consumption in real-time.
+                  {t('aboutAppText')}
                 </p>
               </div>
             </div>
@@ -131,15 +130,15 @@ export default function About() {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                  Developed By
+                  {t('developer')}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Électricité du Liban (EDL)
+                  {t('edlFull')}
                   <br />
                   Digital Services Department
                 </p>
                 <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">
-                  © 2026 Électricité du Liban. All rights reserved.
+                  {t('copyright')}
                 </p>
               </div>
             </div>
@@ -155,13 +154,13 @@ export default function About() {
           <Card className="p-4 dark:bg-gray-800 dark:border-gray-700">
             <div className="flex justify-around text-sm">
               <button className="text-emerald-600 dark:text-emerald-400 hover:underline">
-                Terms of Service
+                {t('termsOfService')}
               </button>
               <button className="text-emerald-600 dark:text-emerald-400 hover:underline">
-                Privacy Policy
+                {t('viewPrivacyPolicy')}
               </button>
               <button className="text-emerald-600 dark:text-emerald-400 hover:underline">
-                Licenses
+                {t('licenses')}
               </button>
             </div>
           </Card>

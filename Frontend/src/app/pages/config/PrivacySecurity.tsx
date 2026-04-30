@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   Lock,
@@ -13,12 +14,14 @@ import {
 } from "lucide-react";
 import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { Switch } from "../../components/ui/switch";
+import { useTranslation } from "../../hooks/useTranslation";
+import { Input } from "../../components/ui/input";
 
 export default function PrivacySecurity() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -32,10 +35,10 @@ export default function PrivacySecurity() {
 
   const handleChangePassword = () => {
     if (passwords.new !== passwords.confirm) {
-      alert("New passwords do not match!");
+      toast.error("New passwords do not match!");
       return;
     }
-    alert("Password changed successfully!");
+    toast.success("Password changed successfully!");
     setPasswords({ current: "", new: "", confirm: "" });
   };
 
@@ -53,7 +56,7 @@ export default function PrivacySecurity() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            Privacy & Security
+            {t('privacySecurity')}
           </h1>
         </div>
       </div>
@@ -72,7 +75,7 @@ export default function PrivacySecurity() {
                 <Lock className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Change Password
+                {t('changePassword')}
               </h3>
             </div>
 
@@ -165,7 +168,7 @@ export default function PrivacySecurity() {
               className="w-full bg-emerald-500 hover:bg-emerald-600"
             >
               <Save className="w-4 h-4 mr-2" />
-              Update Password
+              {t('saveChanges')}
             </Button>
           </Card>
         </motion.div>
@@ -182,7 +185,7 @@ export default function PrivacySecurity() {
                 <Shield className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Security Options
+                {t('security')}
               </h3>
             </div>
 
@@ -191,10 +194,10 @@ export default function PrivacySecurity() {
                 <Key className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    Two-Factor Authentication
+                    {t('twoFactorAuth')}
                   </p>
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Add extra security to your account
+                    {t('extraSecurity')}
                   </p>
                 </div>
               </div>
@@ -235,17 +238,17 @@ export default function PrivacySecurity() {
                 <Eye className="w-5 h-5 text-purple-600 dark:text-purple-400" />
               </div>
               <h3 className="font-semibold text-gray-900 dark:text-white">
-                Privacy Controls
+                {t('privacy')}
               </h3>
             </div>
 
             <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50 dark:bg-gray-900">
               <div>
                 <p className="font-medium text-gray-900 dark:text-white">
-                  Data Visibility
+                  {t('dataSharing')}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Share usage statistics
+                  {t('shareUsageData')}
                 </p>
               </div>
               <Switch

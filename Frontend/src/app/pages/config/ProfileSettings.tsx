@@ -1,14 +1,17 @@
 import { motion } from "motion/react";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import { ArrowLeft, User, Mail, Phone, MapPin, Save, Camera } from "lucide-react";
 import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
+import { useTranslation } from "../../hooks/useTranslation";
 
 export default function ProfileSettings() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     username: sessionStorage.getItem("userId") || "LEB-12345",
     email: "user@example.com",
@@ -18,7 +21,7 @@ export default function ProfileSettings() {
 
   const handleSave = () => {
     sessionStorage.setItem("userId", formData.username);
-    alert("Profile updated successfully!");
+    toast.success("Profile updated successfully!");
   };
 
   return (
@@ -35,7 +38,7 @@ export default function ProfileSettings() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            Profile Settings
+            {t('profileSettings')}
           </h1>
         </div>
       </div>
@@ -60,7 +63,7 @@ export default function ProfileSettings() {
               </div>
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-900 dark:text-white">
-                  Profile Photo
+                  {t('profileSettings')}
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Click the camera icon to update
@@ -79,7 +82,7 @@ export default function ProfileSettings() {
           <Card className="p-6 space-y-5 dark:bg-gray-800 dark:border-gray-700">
             <div>
               <Label htmlFor="username" className="text-gray-700 dark:text-gray-300">
-                Username / User ID
+                {t('userId')}
               </Label>
               <div className="mt-2 flex items-center gap-2">
                 <User className="w-5 h-5 text-gray-400" />
@@ -96,7 +99,7 @@ export default function ProfileSettings() {
 
             <div>
               <Label htmlFor="email" className="text-gray-700 dark:text-gray-300">
-                Email Address
+                {t('emailAddress')}
               </Label>
               <div className="mt-2 flex items-center gap-2">
                 <Mail className="w-5 h-5 text-gray-400" />
@@ -114,7 +117,7 @@ export default function ProfileSettings() {
 
             <div>
               <Label htmlFor="phone" className="text-gray-700 dark:text-gray-300">
-                Phone Number
+                {t('phoneNumber')}
               </Label>
               <div className="mt-2 flex items-center gap-2">
                 <Phone className="w-5 h-5 text-gray-400" />
@@ -132,7 +135,7 @@ export default function ProfileSettings() {
 
             <div>
               <Label htmlFor="address" className="text-gray-700 dark:text-gray-300">
-                Address
+                {t('address')}
               </Label>
               <div className="mt-2 flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-gray-400" />
@@ -160,7 +163,7 @@ export default function ProfileSettings() {
             className="w-full h-12 bg-emerald-500 hover:bg-emerald-600"
           >
             <Save className="w-5 h-5 mr-2" />
-            Save Changes
+            {t('saveChanges')}
           </Button>
         </motion.div>
       </div>
