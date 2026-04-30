@@ -5,19 +5,30 @@ import { useTranslation } from '../hooks/useTranslation';
 import {
   DollarSign,
   Wallet,
-  FileText,
   Clock,
   Download,
   Check,
   X,
   MessageCircle,
+  AlertTriangle,
 } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // Mock billing data
-const billingData = [
+const initialBillingData = [
+  {
+    id: 5,
+    year: 2026,
+    month: "March",
+    amount: 16500,
+    status: "unpaid",
+    dueDate: "2026-03-31",
+    usage: 220,
+  },
   {
     id: 1,
     year: 2026,
@@ -56,7 +67,7 @@ const billingData = [
   },
 ];
 
-const paymentHistory = [
+const initialPaymentHistory = [
   {
     id: 1,
     date: "2026-02-20",
@@ -69,9 +80,9 @@ const paymentHistory = [
     id: 2,
     date: "2026-01-25",
     amount: 14200,
-    method: "Wish Money",
+    method: "Whish Money",
     status: "completed",
-    reference: "WISH-2026-5678",
+    reference: "WHISH-2026-5678",
   },
   {
     id: 3,
@@ -85,9 +96,98 @@ const paymentHistory = [
 
 export default function Finance() {
   const [activeTab, setActiveTab] = useState("bills");
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(
-    null
-  );
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
+  const [bills, setBills] = useState(initialBillingData);
+  const [history, setHistory] = useState(initialPaymentHistory);
+
+  const getLateFee = (bill: typeof initialBillingData[0]) => {
+    if (bill.status === "paid") return 0;
+    const today = new Date();
+    const dueDate = new Date(bill.dueDate);
+    if (today > dueDate) {
+      return bill.amount * 0.05;
+    }
+    return 0;
+  };
+
+  const outstandingBase = bills
+    .filter(bill => bill.status === "unpaid")
+    .reduce((sum, bill) => sum + bill.amount, 0);
+
+  const outstandingLateFees = bills
+    .filter(bill => bill.status === "unpaid")
+    .reduce((sum, bill) => sum + getLateFee(bill), 0);
+
+  const outstandingAmount = outstandingBase + outstandingLateFees;
+
+  const handlePayment = () => {
+    if (!selectedPaymentMethod || outstandingAmount === 0) return;
+
+    setBills(currentBills => 
+      currentBills.map(bill => 
+        bill.status === "unpaid" ? { ...bill, status: "paid" } : bill
+      )
+    );
+
+    const methodNames: Record<string, string> = {
+      omt: "OMT",
+      whish: "Whish Money",
+      cash: "Cash"
+    };
+
+    const newPayment = {
+      id: Date.now(),
+      date: new Date().toISOString().split('T')[0],
+      amount: outstandingAmount,
+      method: methodNames[selectedPaymentMethod] || selectedPaymentMethod,
+      status: "completed",
+      reference: `PAY-${Date.now().toString().slice(-6)}`,
+    };
+
+    setHistory(prev => [newPayment, ...prev]);
+    setSelectedPaymentMethod(null);
+    setActiveTab("history");
+  };
+  const generateInvoice = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(20);
+    doc.text("EDL Invoice", 14, 22);
+    
+    doc.setFontSize(11);
+    doc.text(`Date: ${new Date().toISOString().split('T')[0]}`, 14, 30);
+    doc.text(`User ID: ${sessionStorage.getItem("userId") || "N/A"}`, 14, 36);
+    
+    const unpaidBills = bills.filter(b => b.status === "unpaid");
+    
+    if (unpaidBills.length === 0) {
+      doc.text("No outstanding bills to pay.", 14, 50);
+      doc.save(`Invoice-${Date.now()}.pdf`);
+      return;
+    }
+
+    const tableData = unpaidBills.map(bill => {
+      const lateFee = getLateFee(bill);
+      const total = bill.amount + lateFee;
+      return [
+        `${bill.month} ${bill.year}`,
+        `${bill.usage} kWh`,
+        bill.dueDate,
+        `${bill.amount.toLocaleString()} LBP`,
+        lateFee > 0 ? `${lateFee.toLocaleString()} LBP` : "-",
+        `${total.toLocaleString()} LBP`
+      ];
+    });
+
+    autoTable(doc, {
+      startY: 50,
+      head: [['Period', 'Usage', 'Due Date', 'Base Amount', 'Late Fee (5%)', 'Total Due']],
+      body: tableData,
+      foot: [['', '', '', 'Total Outstanding', '', `${outstandingAmount.toLocaleString()} LBP`]],
+    });
+
+    doc.save(`EDL-Invoice-${Date.now()}.pdf`);
+  };
+
   const { currency } = useContext(PageContext);
   const { t } = useTranslation();
 
@@ -120,7 +220,7 @@ export default function Finance() {
             </div>
             <div className="text-right">
               <p className="text-emerald-100 text-sm">Outstanding</p>
-              <h3 className="text-2xl font-bold">{formatCurrency(12800)}</h3>
+              <h3 className="text-2xl font-bold">{formatCurrency(outstandingAmount)}</h3>
             </div>
           </div>
         </Card>
@@ -144,7 +244,7 @@ export default function Finance() {
             <Card className="p-4 dark:bg-gray-800 dark:border-gray-700">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-gray-900 dark:text-white">{t('billBreakdown')}</h3>
-                <Button variant="ghost" size="sm">
+                <Button variant="ghost" size="sm" onClick={generateInvoice}>
                   <Download className="w-4 h-4 mr-2" />
                   {t('downloadInvoice')}
                 </Button>
@@ -165,7 +265,13 @@ export default function Finance() {
                         Usage (kWh)
                       </th>
                       <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Amount
+                        Base Amount
+                      </th>
+                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Late Fee
+                      </th>
+                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
+                        Total Due
                       </th>
                       <th className="text-center py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
                         Status
@@ -173,7 +279,7 @@ export default function Finance() {
                     </tr>
                   </thead>
                   <tbody>
-                    {billingData.map((bill, index) => (
+                    {bills.map((bill, index) => (
                       <motion.tr
                         key={bill.id}
                         initial={{ opacity: 0, x: -20 }}
@@ -193,6 +299,12 @@ export default function Finance() {
                         <td className="py-4 px-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
                           {formatCurrency(bill.amount)}
                         </td>
+                        <td className="py-4 px-2 text-sm font-medium text-red-600 dark:text-red-400">
+                          {getLateFee(bill) > 0 ? formatCurrency(getLateFee(bill)) : "-"}
+                        </td>
+                        <td className="py-4 px-2 text-sm font-bold text-gray-900 dark:text-gray-100">
+                          {formatCurrency(bill.amount + getLateFee(bill))}
+                        </td>
                         <td className="py-4 px-2 text-center">
                           {bill.status === "paid" ? (
                             <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-medium">
@@ -200,9 +312,16 @@ export default function Finance() {
                               Paid
                             </div>
                           ) : (
-                            <div className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-xs font-medium">
-                              <X className="w-3 h-3" />
-                              Unpaid
+                            <div className="flex flex-col items-center gap-1">
+                              <div className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-xs font-medium">
+                                <X className="w-3 h-3" />
+                                Unpaid
+                              </div>
+                              {getLateFee(bill) > 0 && (
+                                <span className="text-[10px] text-red-600 dark:text-red-400 flex items-center gap-1 font-semibold">
+                                  <AlertTriangle className="w-3 h-3" /> Overdue
+                                </span>
+                              )}
                             </div>
                           )}
                         </td>
@@ -248,14 +367,8 @@ export default function Finance() {
                   }`}
                 >
                   <div className="text-center">
-                    <div
-                      className={`w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center ${
-                        selectedPaymentMethod === "omt"
-                          ? "bg-emerald-500"
-                          : "bg-orange-500"
-                      }`}
-                    >
-                      <Wallet className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden flex items-center justify-center bg-white border border-gray-200 dark:border-gray-600">
+                      <img src="/assets/omt.png" alt="OMT" className="w-full h-full object-cover" />
                     </div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-1">OMT</h4>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Instant transfer</p>
@@ -266,24 +379,18 @@ export default function Finance() {
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  onClick={() => setSelectedPaymentMethod("wish")}
+                  onClick={() => setSelectedPaymentMethod("whish")}
                   className={`cursor-pointer p-6 rounded-xl border-2 transition-all ${
-                    selectedPaymentMethod === "wish"
+                    selectedPaymentMethod === "whish"
                       ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
                       : "border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-emerald-300 dark:hover:border-emerald-600"
                   }`}
                 >
                   <div className="text-center">
-                    <div
-                      className={`w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center ${
-                        selectedPaymentMethod === "wish"
-                          ? "bg-emerald-500"
-                          : "bg-blue-500"
-                      }`}
-                    >
-                      <DollarSign className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden flex items-center justify-center bg-white border border-gray-200 dark:border-gray-600">
+                      <img src="/assets/whish.png" alt="Whish Money" className="w-full h-full object-cover" />
                     </div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Wish Money</h4>
+                    <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Whish Money</h4>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Mobile payment</p>
                   </div>
                 </motion.div>
@@ -300,17 +407,10 @@ export default function Finance() {
                   }`}
                 >
                   <div className="text-center">
-                    <div
-                      className={`w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center ${
-                        selectedPaymentMethod === "cash"
-                          ? "bg-emerald-500"
-                          : "bg-green-600"
-                      }`}
-                    >
-                      <FileText className="w-8 h-8 text-white" />
+                    <div className="w-16 h-16 mx-auto mb-3 rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900/40">
+                      <Wallet className="w-8 h-8 text-green-600 dark:text-green-400" />
                     </div>
                     <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Cash</h4>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">At EDL office</p>
                   </div>
                 </motion.div>
               </div>
@@ -330,30 +430,30 @@ export default function Finance() {
                         </h4>
                         {selectedPaymentMethod === "omt" && (
                           <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                            <p>1. Open your OMT app</p>
+                            <p>1. Open your OMT app or visit any OMT store</p>
                             <p>2. Send to: EDL Account #03-12345</p>
-                            <p>3. Enter amount: {formatCurrency(12800)}</p>
+                            <p>3. Enter amount: {formatCurrency(outstandingAmount)}</p>
                             <p>4. Reference: Your User ID</p>
                             <p className="font-semibold mt-2">Contact: +961 1 234 567</p>
                           </div>
                         )}
-                        {selectedPaymentMethod === "wish" && (
+                        {selectedPaymentMethod === "whish" && (
                           <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                            <p>1. Open your Wish Money app</p>
+                            <p>1. Open your Whish Money app or visit any Whish Money store</p>
                             <p>2. Send to: EDL Merchant #WM-EDL-001</p>
-                            <p>3. Enter amount: {formatCurrency(12800)}</p>
+                            <p>3. Enter amount: {formatCurrency(outstandingAmount)}</p>
                             <p>4. Reference: Your User ID</p>
                             <p className="font-semibold mt-2">Contact: +961 1 234 567</p>
                           </div>
                         )}
                         {selectedPaymentMethod === "cash" && (
                           <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-                            <p>Visit any EDL office with:</p>
+                            <p>The collector will visit you on Tuesday</p>
                             <p>• Your User ID: {sessionStorage.getItem("userId")}</p>
-                            <p>• Amount: {formatCurrency(12800)}</p>
+                            <p>• Amount: {formatCurrency(outstandingAmount)}</p>
                             <p>• Valid ID card</p>
                             <p className="font-semibold mt-2">
-                              Office Hours: Mon-Fri, 8:00 AM - 4:00 PM
+                              Visit hours: 8:00 AM - 4:00 PM
                             </p>
                           </div>
                         )}
@@ -361,8 +461,30 @@ export default function Finance() {
                     </div>
                   </Card>
 
-                  <Button className="w-full bg-emerald-500 hover:bg-emerald-600">
-                    Confirm Payment Method
+                  {outstandingAmount > 0 && (
+                    <div className="mb-4 p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                      <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Payment Breakdown</h4>
+                      <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        <span>Base Amount:</span>
+                        <span>{formatCurrency(outstandingBase)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm text-red-600 dark:text-red-400 mb-2">
+                        <span>Late Fees (5%):</span>
+                        <span>{formatCurrency(outstandingLateFees)}</span>
+                      </div>
+                      <div className="flex justify-between text-base font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-gray-700">
+                        <span>Total to Pay:</span>
+                        <span>{formatCurrency(outstandingAmount)}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <Button 
+                    className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={handlePayment}
+                    disabled={outstandingAmount === 0}
+                  >
+                    {outstandingAmount > 0 ? "Confirm Payment Method" : "No Outstanding Balance"}
                   </Button>
                 </motion.div>
               )}
@@ -377,7 +499,7 @@ export default function Finance() {
               </h3>
 
               <div className="space-y-3">
-                {paymentHistory.map((payment, index) => (
+                {history.map((payment, index) => (
                   <motion.div
                     key={payment.id}
                     initial={{ opacity: 0, x: -20 }}
