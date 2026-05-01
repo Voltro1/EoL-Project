@@ -10,10 +10,25 @@ export default function Login() {
   const navigate = useNavigate();
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+
+  const checkPass = (e: string) => {
+    return true
+  }
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Mock login - store user ID in sessionStorage
+    if (rememberMe){
+      localStorage.setItem("userId", userId || "LEB-12345");
+      localStorage.setItem("isAuth", checkPass(password) ? "t" : "f");
+      localStorage.setItem("rememberMe", rememberMe ? "t" : "f");
+    }
+    else{
+      localStorage.removeItem("userId");
+      localStorage.removeItem("isAuth");
+      localStorage.removeItem("rememberMe");
+    }
     sessionStorage.setItem("userId", userId || "LEB-12345");
     sessionStorage.setItem("isAuthenticated", "true");
     navigate("/");
@@ -41,7 +56,7 @@ export default function Login() {
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="userId" className="flex items-center gap-2">
+              <Label htmlFor="userId" className="flex items-center gap-2 text-black">
                 <User className="w-4 h-4" />
                 User ID
               </Label>
@@ -56,7 +71,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2">
+              <Label htmlFor="password" className="flex items-center gap-2 text-black">
                 <Lock className="w-4 h-4" />
                 Password
               </Label>
@@ -68,6 +83,20 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-12"
               />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-1">
+                <Input
+                  id="rememberme"
+                  type="checkbox"
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                  className="h-5 w-5"
+                />
+                <Label htmlFor="rememberme" className="text-black">
+                  Remember me
+                </Label>
+              </div>
             </div>
 
             <Button
