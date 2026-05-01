@@ -13,7 +13,7 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(false);
 
   const checkPass = (e: string) => {
-    return true
+    return e;
   }
 
   const handleLogin = (e: React.FormEvent) => {
