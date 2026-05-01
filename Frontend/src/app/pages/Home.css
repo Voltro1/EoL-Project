@@ -1,0 +1,368 @@
+/* Home Component Styles */
+
+/* ======================== Container ======================== */
+.container {
+  padding: 1.5rem;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ======================== Status Card ======================== */
+.statusCard {
+  padding: 1.5rem;
+  background: linear-gradient(to bottom right, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+}
+
+.statusContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.statusLeft h2 {
+  font-size: 1.875rem;
+  font-weight: bold;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.statusLeft p {
+  color: rgba(236, 253, 245, 0.8);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.statusIndicator {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.statusIndicator.active {
+  background-color: #facc15;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.statusIndicator.inactive {
+  background-color: #ef4444;
+}
+
+.statusIcon {
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.statusIcon.active {
+  color: #065f46;
+}
+
+.statusIcon.inactive {
+  color: white;
+}
+
+.statusFooter {
+  color: rgba(236, 253, 245, 0.8);
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+/* ======================== Gauge Card ======================== */
+.gaugeCard {
+  padding: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.gaugeCard.dark {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.gaugeCardTitle {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.gaugeCard.dark .gaugeCardTitle {
+  color: #d1d5db;
+}
+
+/* ======================== Credits Card ======================== */
+.creditsCard {
+  padding: 1.5rem;
+  background: linear-gradient(to bottom right, rgba(219, 234, 254, 1), rgba(191, 219, 254, 1));
+  border-radius: 0.5rem;
+  border: 1px solid #bfdbfe;
+}
+
+.creditsCard.dark {
+  background: linear-gradient(to bottom right, rgba(30, 58, 138, 0.3), rgba(30, 27, 112, 0.3));
+  border-color: #1e3a8a;
+}
+
+.creditsContent {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.creditsIcon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 9999px;
+  background-color: #3b82f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.creditsIcon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: white;
+}
+
+.creditsLabel {
+  font-size: 0.875rem;
+  color: #1d4ed8;
+  margin: 0;
+}
+
+.creditsCard.dark .creditsLabel {
+  color: #93c5fd;
+}
+
+.creditsAmount {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1e3a8a;
+  margin: 0;
+}
+
+.creditsCard.dark .creditsAmount {
+  color: #dbeafe;
+}
+
+/* ======================== Usage Stats Grid ======================== */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.statCard {
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.statCard.dark {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+.statCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.statCardIcon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.statCardIcon.trendingUp {
+  color: #059669;
+}
+
+.statCard.dark .statCardIcon.trendingUp {
+  color: #10b981;
+}
+
+.statCardIcon.trendingDown {
+  color: #b45309;
+}
+
+.statCard.dark .statCardIcon.trendingDown {
+  color: #f59e0b;
+}
+
+.statCardLabel {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.statCard.dark .statCardLabel {
+  color: #9ca3af;
+}
+
+.statCardValue {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111827;
+  margin: 0;
+}
+
+.statCard.dark .statCardValue {
+  color: white;
+}
+
+.statCardUnit {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.statCard.dark .statCardUnit {
+  color: #9ca3af;
+}
+
+/* ======================== Advertisement Banner ======================== */
+.adCard {
+  padding: 1.5rem;
+  background: linear-gradient(to right, rgba(243, 232, 255, 1), rgba(252, 231, 243, 1));
+  border-radius: 0.5rem;
+  border: 1px solid #e9d5ff;
+}
+
+.adCard.dark {
+  background: linear-gradient(to right, rgba(88, 28, 135, 0.3), rgba(88, 28, 135, 0.3));
+  border-color: #6b21a8;
+}
+
+.adLabel {
+  font-size: 0.75rem;
+  color: #a21caf;
+  margin-bottom: 0.25rem;
+  margin-top: 0;
+}
+
+.adCard.dark .adLabel {
+  color: #d8b4fe;
+}
+
+.adTitle {
+  font-weight: 600;
+  color: #581c87;
+  margin-bottom: 0.5rem;
+  margin-top: 0;
+}
+
+.adCard.dark .adTitle {
+  color: #e9d5ff;
+}
+
+.adDescription {
+  font-size: 0.875rem;
+  color: #a21caf;
+  margin: 0;
+}
+
+.adCard.dark .adDescription {
+  color: #d8b4fe;
+}
+
+/* ======================== Animations ======================== */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ======================== Responsive Design ======================== */
+@media (max-width: 640px) {
+  .container {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .gaugeCard {
+    padding: 1.5rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statusContent {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .statusIndicator {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.75rem;
+    gap: 0.75rem;
+  }
+
+  .statusCard,
+  .creditsCard,
+  .adCard {
+    padding: 1rem;
+  }
+
+  .gaugeCard {
+    padding: 1rem;
+  }
+
+  .statCard {
+    padding: 1rem;
+  }
+
+  .statusLeft h2 {
+    font-size: 1.5rem;
+  }
+
+  .creditsIcon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .creditsIcon svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .creditsAmount {
+    font-size: 1.25rem;
+  }
+
+  .statCardValue {
+    font-size: 1.25rem;
+  }
+}

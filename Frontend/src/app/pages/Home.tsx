@@ -5,22 +5,14 @@ import { useTranslation } from "../hooks/useTranslation";
 import { TrendingUp, TrendingDown, DollarSign, Zap } from "lucide-react";
 import UsageGauge from "../components/UsageGauge";
 import { Card } from "../components/ui/card";
+import { initialEnergyData } from "../data/homeData";
 
-// Mock data
-const mockData = {
-  currentUsage: 72, // percentage
-  currentKw: 8.5,
-  maxKw: 12,
-  dailyUsage: 204,
-  monthlyUsage: 5632,
-  credits: 45000,
-  status: "on",
-  lastUpdate: new Date().toLocaleTimeString(),
-};
+import './Home.css';
 
 export default function Home() {
-  const [data, setData] = useState(mockData);
+  const [data, setData] = useState(initialEnergyData);
   const [animate, setAnimate] = useState(false);
+  const [isDark, setIsDark] = useState(false);
   const { currency, measurementUnit } = useContext(PageContext);
   const { t } = useTranslation();
 
@@ -36,6 +28,17 @@ export default function Home() {
   const displayDailyUsage = isWatts ? (data.dailyUsage * 1000).toLocaleString() : data.dailyUsage;
   const displayMonthlyUsage = isWatts ? (data.monthlyUsage * 1000).toLocaleString() : data.monthlyUsage.toLocaleString();
   const energyUnitLabel = isWatts ? "Wh" : "kWh";
+
+  // Detect dark mode
+  useEffect(() => {
+    const darkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setIsDark(darkMode);
+
+    const darkModeListener = window.matchMedia("(prefers-color-scheme: dark)");
+    darkModeListener.addEventListener("change", (e) => setIsDark(e.matches));
+
+    return () => darkModeListener.removeEventListener("change", () => {});
+  }, []);
 
   useEffect(() => {
     setAnimate(true);
@@ -56,36 +59,32 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="px-4 py-6 space-y-6 max-w-2xl mx-auto">
+    <div className="container">
       {/* Status Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: animate ? 1 : 0, y: animate ? 0 : 20 }}
         transition={{ delay: 0.1 }}
       >
-        <Card className="p-6 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white border-0">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <p className="text-emerald-100 text-sm">{t('serviceStatus')}</p>
-              <h2 className="text-3xl font-bold mt-1">
-                {data.status.toUpperCase()}
-              </h2>
+        <Card className="statusCard">
+          <div className="statusContent">
+            <div className="statusLeft">
+              <p>{t('serviceStatus')}</p>
+              <h2>{data.status.toUpperCase()}</h2>
             </div>
             <div
-              className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                data.status === "on"
-                  ? "bg-yellow-400 animate-pulse"
-                  : "bg-red-500"
+              className={`statusIndicator ${
+                data.status === "on" ? "active" : "inactive"
               }`}
             >
               <Zap
-                className={`w-8 h-8 ${
-                  data.status === "on" ? "text-emerald-900" : "text-white"
+                className={`statusIcon ${
+                  data.status === "on" ? "active" : "inactive"
                 }`}
               />
             </div>
           </div>
-          <p className="text-emerald-100 text-sm">
+          <p className="statusFooter">
             {t('lastUpdated')}: {data.lastUpdate}
           </p>
         </Card>
@@ -97,8 +96,8 @@ export default function Home() {
         animate={{ opacity: animate ? 1 : 0, scale: animate ? 1 : 0.9 }}
         transition={{ delay: 0.2 }}
       >
-        <Card className="p-8 dark:bg-gray-800 dark:border-gray-700">
-          <h3 className="text-center mb-6 text-gray-700 dark:text-gray-300">{t('currentUsage')}</h3>
+        <Card className={`gaugeCard ${isDark ? "dark" : ""}`}>
+          <h3>{t('currentUsage')}</h3>
           <UsageGauge
             value={data.currentUsage}
             currentKw={data.currentKw}
@@ -113,16 +112,14 @@ export default function Home() {
         animate={{ opacity: animate ? 1 : 0, y: animate ? 0 : 20 }}
         transition={{ delay: 0.3 }}
       >
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30 border-blue-200 dark:border-blue-800">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-white" />
+        <Card className={`creditsCard ${isDark ? "dark" : ""}`}>
+          <div className="creditsContent">
+            <div className="creditsIcon">
+              <DollarSign />
             </div>
-            <div>
-              <p className="text-sm text-blue-700 dark:text-blue-300">Available Credits</p>
-              <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
-                {formatCurrency(data.credits)}
-              </p>
+            <div className="creditsInfo">
+              <p>Available Credits</p>
+              <p>{formatCurrency(data.credits)}</p>
             </div>
           </div>
         </Card>
@@ -133,26 +130,24 @@ export default function Home() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: animate ? 1 : 0, y: animate ? 0 : 20 }}
         transition={{ delay: 0.4 }}
-        className="grid grid-cols-2 gap-4"
+        className="statsGrid"
       >
-        <Card className="p-5 dark:bg-gray-800 dark:border-gray-700">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-xs text-gray-500 dark:text-gray-400">Daily Usage</span>
+        <Card className={`statCard ${isDark ? "dark" : ""}`}>
+          <div className="statCardHeader">
+            <TrendingUp className="statCardIcon trending-up" />
+            <span className="statCardLabel">Daily Usage</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">{displayDailyUsage}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{energyUnitLabel} today</p>
+          <p className="statCardValue">{displayDailyUsage}</p>
+          <p className="statCardUnit">{energyUnitLabel} today</p>
         </Card>
 
-        <Card className="p-5 dark:bg-gray-800 dark:border-gray-700">
-          <div className="flex items-center gap-2 mb-2">
-            <TrendingDown className="w-4 h-4 text-orange-600 dark:text-orange-400" />
-            <span className="text-xs text-gray-500 dark:text-gray-400">{t('thisMonth')}</span>
+        <Card className={`statCard ${isDark ? "dark" : ""}`}>
+          <div className="statCardHeader">
+            <TrendingDown className="statCardIcon trending-down" />
+            <span className="statCardLabel">{t('thisMonth')}</span>
           </div>
-          <p className="text-2xl font-bold text-gray-900 dark:text-white">
-            {displayMonthlyUsage}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{energyUnitLabel} this month</p>
+          <p className="statCardValue">{displayMonthlyUsage}</p>
+          <p className="statCardUnit">{energyUnitLabel} this month</p>
         </Card>
       </motion.div>
 
@@ -162,12 +157,12 @@ export default function Home() {
         animate={{ opacity: animate ? 1 : 0 }}
         transition={{ delay: 0.5 }}
       >
-        <Card className="p-6 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 border-purple-200 dark:border-purple-800">
-          <p className="text-xs text-purple-700 dark:text-purple-300 mb-1">ADVERTISEMENT</p>
-          <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">
+        <Card className={`adCard ${isDark ? "dark" : ""}`}>
+          <p className="adLabel">ADVERTISEMENT</p>
+          <h4 className="adTitle">
             Save up to 30% on your electricity bill!
           </h4>
-          <p className="text-sm text-purple-700 dark:text-purple-300">
+          <p className="adDescription">
             Switch to off-peak hours for better rates. Learn more about our
             savings programs.
           </p>
