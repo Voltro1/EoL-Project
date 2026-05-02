@@ -5,18 +5,17 @@ import { useTranslation } from '../hooks/useTranslation';
 import {
   DollarSign,
   Wallet,
-  Clock,
   Download,
   Check,
-  X,
   MessageCircle,
-  AlertTriangle,
 } from "lucide-react";
 import { Card } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../components/ui/tabs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { FinanceAlerts } from "../components/FinanceAlerts";
+import { BillHistory } from "../components/BillHistory";
 
 // Mock billing data
 const initialBillingData = [
@@ -233,118 +232,32 @@ export default function Finance() {
         transition={{ delay: 0.2 }}
       >
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-6">
+          <TabsList className="grid w-full grid-cols-4 mb-6">
             <TabsTrigger value="bills">Bills</TabsTrigger>
             <TabsTrigger value="payment">Payment</TabsTrigger>
             <TabsTrigger value="history">History</TabsTrigger>
+            <TabsTrigger value="alerts" className="relative">
+              Alerts
+              {bills.some(b => b.status === "unpaid" && new Date() > new Date(b.dueDate)) && (
+                <span className="absolute top-1.5 right-2 w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              )}
+            </TabsTrigger>
           </TabsList>
 
           {/* Bills Tab */}
           <TabsContent value="bills" className="space-y-4">
-            <Card className="p-4 dark:bg-gray-800 dark:border-gray-700">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-900 dark:text-white">{t('billBreakdown')}</h3>
-                <Button variant="ghost" size="sm" onClick={generateInvoice}>
-                  <Download className="w-4 h-4 mr-2" />
-                  {t('downloadInvoice')}
-                </Button>
-              </div>
-
-              {/* Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Year
-                      </th>
-                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Month
-                      </th>
-                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Usage (kWh)
-                      </th>
-                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Base Amount
-                      </th>
-                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Late Fee
-                      </th>
-                      <th className="text-left py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Total Due
-                      </th>
-                      <th className="text-center py-3 px-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bills.map((bill, index) => (
-                      <motion.tr
-                        key={bill.id}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + index * 0.1 }}
-                        className="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                      >
-                        <td className="py-4 px-2 text-sm text-gray-900 dark:text-gray-100">
-                          {bill.year}
-                        </td>
-                        <td className="py-4 px-2 text-sm text-gray-900 dark:text-gray-100">
-                          {bill.month}
-                        </td>
-                        <td className="py-4 px-2 text-sm text-gray-900 dark:text-gray-100">
-                          {bill.usage}
-                        </td>
-                        <td className="py-4 px-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          {formatCurrency(bill.amount)}
-                        </td>
-                        <td className="py-4 px-2 text-sm font-medium text-red-600 dark:text-red-400">
-                          {getLateFee(bill) > 0 ? formatCurrency(getLateFee(bill)) : "-"}
-                        </td>
-                        <td className="py-4 px-2 text-sm font-bold text-gray-900 dark:text-gray-100">
-                          {formatCurrency(bill.amount + getLateFee(bill))}
-                        </td>
-                        <td className="py-4 px-2 text-center">
-                          {bill.status === "paid" ? (
-                            <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-full text-xs font-medium">
-                              <Check className="w-3 h-3" />
-                              Paid
-                            </div>
-                          ) : (
-                            <div className="flex flex-col items-center gap-1">
-                              <div className="inline-flex items-center gap-1 px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-xs font-medium">
-                                <X className="w-3 h-3" />
-                                Unpaid
-                              </div>
-                              {getLateFee(bill) > 0 && (
-                                <span className="text-[10px] text-red-600 dark:text-red-400 flex items-center gap-1 font-semibold">
-                                  <AlertTriangle className="w-3 h-3" /> Overdue
-                                </span>
-                              )}
-                            </div>
-                          )}
-                        </td>
-                      </motion.tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </Card>
-
-            {/* Legend */}
-            <Card className="p-4 bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-              <div className="flex items-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  <span className="text-gray-700 dark:text-gray-300">Green = Paid</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <X className="w-4 h-4 text-red-600 dark:text-red-400" />
-                  <span className="text-gray-700 dark:text-gray-300">Red = Unpaid</span>
-                </div>
-              </div>
-            </Card>
+            <div className="flex justify-end mb-2">
+              <Button variant="outline" size="sm" onClick={generateInvoice}>
+                <Download className="w-4 h-4 mr-2" />
+                {t('downloadInvoice')}
+              </Button>
+            </div>
+            
+            <BillHistory 
+              bills={bills} 
+              formatCurrency={formatCurrency} 
+              getLateFee={getLateFee} 
+            />
           </TabsContent>
 
           {/* Payment Tab */}
@@ -542,6 +455,14 @@ export default function Finance() {
                 ))}
               </div>
             </Card>
+          </TabsContent>
+
+          {/* Alerts Tab */}
+          <TabsContent value="alerts">
+            <FinanceAlerts 
+              bills={bills} 
+              onNavigateToPayment={() => setActiveTab("payment")} 
+            />
           </TabsContent>
         </Tabs>
       </motion.div>
