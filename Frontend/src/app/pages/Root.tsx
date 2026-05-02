@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
+import { restoreRememberedSession } from "../lib/account";
 
 export default function Root() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check authentication
+    restoreRememberedSession();
     const isAuthenticated = sessionStorage.getItem("isAuthenticated");
     if (!isAuthenticated) {
       navigate("/login");

@@ -1,9 +1,12 @@
 import { Bell, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslation } from "../hooks/useTranslation";
+import { getStoredAuthSession } from "../lib/account";
 
 export default function Header() {
   const { t } = useTranslation();
+  const account = getStoredAuthSession();
+
   return (
     <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 transition-colors duration-300">
       {/* Announcement Banner */}
@@ -34,7 +37,7 @@ export default function Header() {
         <div className="text-right">
           <p className="text-xs text-gray-500 dark:text-gray-400">{t('userId')}</p>
           <p className="text-sm font-medium text-gray-900 dark:text-white">
-            {sessionStorage.getItem("userId") || "LEB-12345"}
+            {account?.userId || "UID-0"}
           </p>
         </div>
       </div>

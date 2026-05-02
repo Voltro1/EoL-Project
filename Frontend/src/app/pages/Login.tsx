@@ -1,37 +1,73 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router";
-import { Zap, User, Lock } from "lucide-react";
+import { useContext, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { motion } from "motion/react";
+import { Lock, User, Zap } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "../components/ui/button";
+import { Checkbox } from "../components/ui/checkbox";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
+import { useTheme } from "../contexts/ThemeContext";
+import { PageContext } from "../contexts/PageContext";
+import {
+  getStoredAuthSession,
+  loginAccount,
+  mapAccountToStoredSession,
+  persistAuthSession,
+} from "../lib/account";
 
 export default function Login() {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState("");
+  const { setTheme } = useTheme();
+  const { setCurrency, setLanguage, setMeasurementUnit } = useContext(PageContext);
+  const rememberedAccount = useMemo(() => getStoredAuthSession(), []);
+  const [userId, setUserId] = useState(rememberedAccount?.userId || "");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(
+    localStorage.getItem("rememberMe") === "true",
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
-  const checkPass = (e: string) => {
-    return e;
-  }
+  const normalizeUserId = (value: string) => {
+    const trimmed = value.trim();
+    if (/^\d+$/.test(trimmed)) {
+      return `UID-${trimmed}`;
+    }
 
-  const handleLogin = (e: React.FormEvent) => {
+    return trimmed;
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock login - store user ID in sessionStorage
-    if (rememberMe){
-      localStorage.setItem("userId", userId || "LEB-12345");
-      localStorage.setItem("isAuth", checkPass(password) ? "t" : "f");
-      localStorage.setItem("rememberMe", rememberMe ? "t" : "f");
+    setIsSubmitting(true);
+    setStatus(null);
+
+    try {
+      const account = await loginAccount(normalizeUserId(userId), password);
+      const session = mapAccountToStoredSession(account);
+
+      persistAuthSession(session, rememberMe);
+      setCurrency(session.preferences.currency);
+      setLanguage(session.preferences.language);
+      setMeasurementUnit(session.preferences.measurementUnit);
+      setTheme(session.preferences.darkMode ? "dark" : "light");
+
+      setStatus({ type: "success", message: `Welcome back, ${session.name}.` });
+      toast.success(`Welcome back, ${session.name}`);
+      navigate("/");
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message: error instanceof Error ? error.message : "Login failed.",
+      });
+      toast.error(error instanceof Error ? error.message : "Login failed.");
+    } finally {
+      setIsSubmitting(false);
     }
-    else{
-      localStorage.removeItem("userId");
-      localStorage.removeItem("isAuth");
-      localStorage.removeItem("rememberMe");
-    }
-    sessionStorage.setItem("userId", userId || "LEB-12345");
-    sessionStorage.setItem("isAuthenticated", "true");
-    navigate("/");
   };
 
   return (
@@ -42,7 +78,6 @@ export default function Login() {
         className="w-full max-w-md"
       >
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-emerald-100">
-          {/* Logo & Title */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full mb-4">
               <Zap className="w-8 h-8 text-white" />
@@ -50,11 +85,22 @@ export default function Login() {
             <h1 className="text-2xl font-bold text-gray-900 mb-2">
               Électricité du Liban
             </h1>
-            <p className="text-gray-600">Monitor your electricity usage</p>
+            <p className="text-gray-600">Log in with `UID-123` or just `123`</p>
           </div>
 
-          {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
+            {status ? (
+              <div
+                className={`rounded-xl border px-4 py-3 text-sm ${
+                  status.type === "success"
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                    : "border-red-200 bg-red-50 text-red-700"
+                }`}
+              >
+                {status.message}
+              </div>
+            ) : null}
+
             <div className="space-y-2">
               <Label htmlFor="userId" className="flex items-center gap-2 text-black">
                 <User className="w-4 h-4" />
@@ -63,10 +109,11 @@ export default function Login() {
               <Input
                 id="userId"
                 type="text"
-                placeholder="LEB-12345"
+                placeholder="UID-1 or 1"
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
                 className="h-12"
+                required
               />
             </div>
 
@@ -82,39 +129,37 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="h-12"
+                required
               />
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center gap-1">
-                <Input
-                  id="rememberme"
-                  type="checkbox"
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-5 w-5"
-                />
-                <Label htmlFor="rememberme" className="text-black">
-                  Remember me
-                </Label>
-              </div>
+            <div className="flex items-center gap-3">
+              <Checkbox
+                id="rememberme"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
+              />
+              <Label htmlFor="rememberme" className="text-black">
+                Remember me
+              </Label>
             </div>
 
             <Button
               type="submit"
+              disabled={isSubmitting}
               className="w-full h-12 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700"
             >
-              Login
+              {isSubmitting ? "Logging in..." : "Login"}
             </Button>
           </form>
 
-          {/* Footer */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 mb-4">
-              Demo credentials: Any ID and password
+              Sign up first to receive your UID account ID.
             </p>
             <div className="border-t border-gray-200 pt-4">
               <p className="text-sm text-gray-600">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Link
                   to="/signup"
                   className="text-emerald-600 hover:text-emerald-700 font-semibold"

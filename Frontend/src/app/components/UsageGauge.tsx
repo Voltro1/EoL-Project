@@ -71,23 +71,23 @@ export default function UsageGauge({
             transition={{ duration: 1, ease: "easeOut" }}
           />
 
-          {/* Center dot - static at the center point (100, 100) */}
-          <circle cx="100" cy="100" r="8" fill={needleColor} />
-
-          {/* Needle - rotates around the center dot at (100, 100) */}
-          <motion.line
-            x1="100"
-            y1="100"
-            x2="100"
-            y2="30"
-            stroke={needleColor}
-            strokeWidth="3"
-            strokeLinecap="round"
+          <motion.g
             initial={{ rotate: -90 }}
             animate={{ rotate: rotation }}
             transition={{ duration: 1, ease: "easeOut" }}
-            style={{ transformOrigin: "100px 100px" }}
-          />
+            style={{ transformBox: "fill-box", transformOrigin: "center" }}
+          >
+            <line
+              x1="100"
+              y1="100"
+              x2="100"
+              y2="30"
+              stroke={needleColor}
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <circle cx="100" cy="100" r="8" fill={needleColor} />
+          </motion.g>
         </svg>
       </div>
 
