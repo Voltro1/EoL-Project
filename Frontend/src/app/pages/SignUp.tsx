@@ -11,13 +11,14 @@ import { useTheme } from "../contexts/ThemeContext";
 import {
   mapAccountToStoredSession,
   persistAuthSession,
+  saveAccountPreferences,
   signupAccount,
 } from "../lib/account";
 
 export default function SignUp() {
   const navigate = useNavigate();
   const { setCurrency, setLanguage, setMeasurementUnit } = useContext(PageContext);
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -61,11 +62,25 @@ export default function SignUp() {
       });
 
       const session = mapAccountToStoredSession(account);
+      const updatedPreferences = {
+        ...session.preferences,
+        darkMode: theme === "dark",
+      };
+
+      session.preferences = updatedPreferences;
       persistAuthSession(session, false);
-      setCurrency(session.preferences.currency);
-      setLanguage(session.preferences.language);
-      setMeasurementUnit(session.preferences.measurementUnit);
-      setTheme(session.preferences.darkMode ? "dark" : "light");
+      setCurrency(updatedPreferences.currency);
+      setLanguage(updatedPreferences.language);
+      setMeasurementUnit(updatedPreferences.measurementUnit);
+      setTheme(updatedPreferences.darkMode ? "dark" : "light");
+
+      if (updatedPreferences.darkMode) {
+        try {
+          await saveAccountPreferences(session.userId, updatedPreferences);
+        } catch {
+          toast.error("Could not save dark mode preference right away.");
+        }
+      }
 
       setStatus({
         type: "success",
@@ -85,21 +100,21 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-red-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-red-50 flex items-center justify-center p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-emerald-100">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl dark:shadow-black/20 p-8 border border-emerald-100 dark:border-gray-800">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full mb-4">
               <Zap className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Create Account
             </h1>
-            <p className="text-gray-600">Name, phone, and password are required.</p>
+            <p className="text-gray-600 dark:text-gray-300">Name, phone, and password are required.</p>
           </div>
 
           <form onSubmit={handleSignUp} className="space-y-4">
@@ -225,11 +240,11 @@ export default function SignUp() {
           </form>
 
           <div className="mt-6 text-center text-sm">
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               Already have an account?{" "}
               <Link
                 to="/login"
-                className="text-emerald-600 hover:text-emerald-700 font-semibold"
+                className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold"
               >
                 Login
               </Link>

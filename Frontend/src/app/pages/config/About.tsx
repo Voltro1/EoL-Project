@@ -145,23 +145,36 @@ export default function About() {
           </Card>
         </motion.div>
 
-        {/* Legal Links */}
+        {/* Legal Sections */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card className="p-4 dark:bg-gray-800 dark:border-gray-700">
-            <div className="flex justify-around text-sm">
-              <button className="text-emerald-600 dark:text-emerald-400 hover:underline">
+          <Card className="p-6 space-y-4 dark:bg-gray-800 dark:border-gray-700">
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t('termsOfService')}
-              </button>
-              <button className="text-emerald-600 dark:text-emerald-400 hover:underline">
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                This application is governed by terms that define rights and responsibilities for using EDL services.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t('viewPrivacyPolicy')}
-              </button>
-              <button className="text-emerald-600 dark:text-emerald-400 hover:underline">
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                Your privacy is important to us. We only collect data needed to provide service and protect your account.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                 {t('licenses')}
-              </button>
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                This product uses open source software under standard licenses. See the full license list for more details.
+              </p>
             </div>
           </Card>
         </motion.div>

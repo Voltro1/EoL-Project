@@ -16,6 +16,7 @@ import { Card } from "../../components/ui/card";
 import { Button } from "../../components/ui/button";
 import { Label } from "../../components/ui/label";
 import { Switch } from "../../components/ui/switch";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../../components/ui/dialog";
 import { useTranslation } from "../../hooks/useTranslation";
 import { Input } from "../../components/ui/input";
 
@@ -32,6 +33,7 @@ export default function PrivacySecurity() {
   });
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
   const [dataVisibility, setDataVisibility] = useState(true);
+  const [showSessionsOpen, setShowSessionsOpen] = useState(false);
 
   const handleChangePassword = () => {
     if (passwords.new !== passwords.confirm) {
@@ -219,7 +221,7 @@ export default function PrivacySecurity() {
                   </p>
                 </div>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={() => setShowSessionsOpen(true)}>
                 View
               </Button>
             </div>
@@ -259,6 +261,34 @@ export default function PrivacySecurity() {
           </Card>
         </motion.div>
       </div>
+
+      <Dialog open={showSessionsOpen} onOpenChange={setShowSessionsOpen}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Active Sessions</DialogTitle>
+            <DialogDescription>
+              Review the devices and browsers currently signed into your account.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 mt-4">
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">Current session</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Chrome on Windows · Beirut, Lebanon</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Active now</p>
+            </div>
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">Mobile session</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Safari on iPhone · Beirut, Lebanon</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Last active 12 hours ago</p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setShowSessionsOpen(false)}>
+              Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -18,7 +18,7 @@ import {
 
 export default function Login() {
   const navigate = useNavigate();
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { setCurrency, setLanguage, setMeasurementUnit } = useContext(PageContext);
   const rememberedAccount = useMemo(() => getStoredAuthSession(), []);
   const [userId, setUserId] = useState(rememberedAccount?.userId || "");
@@ -71,21 +71,21 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-red-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-red-50 flex items-center justify-center p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-emerald-100">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl dark:shadow-black/20 p-8 border border-emerald-100 dark:border-gray-800">
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full mb-4">
               <Zap className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Électricité du Liban
             </h1>
-            <p className="text-gray-600">Log in with `UID-123` or just `123`</p>
+            <p className="text-gray-600 dark:text-gray-300">Log in with `UID-123` or just `123`</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -93,8 +93,8 @@ export default function Login() {
               <div
                 className={`rounded-xl border px-4 py-3 text-sm ${
                   status.type === "success"
-                    ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                    : "border-red-200 bg-red-50 text-red-700"
+                    ? "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-200"
+                    : "border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/50 dark:text-red-200"
                 }`}
               >
                 {status.message}
@@ -102,7 +102,7 @@ export default function Login() {
             ) : null}
 
             <div className="space-y-2">
-              <Label htmlFor="userId" className="flex items-center gap-2 text-black">
+              <Label htmlFor="userId" className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <User className="w-4 h-4" />
                 User ID
               </Label>
@@ -118,7 +118,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="flex items-center gap-2 text-black">
+              <Label htmlFor="password" className="flex items-center gap-2 text-gray-900 dark:text-gray-100">
                 <Lock className="w-4 h-4" />
                 Password
               </Label>
@@ -139,7 +139,7 @@ export default function Login() {
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(checked === true)}
               />
-              <Label htmlFor="rememberme" className="text-black">
+              <Label htmlFor="rememberme" className="text-gray-900 dark:text-gray-100">
                 Remember me
               </Label>
             </div>
@@ -154,15 +154,15 @@ export default function Login() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
               Sign up first to receive your UID account ID.
             </p>
-            <div className="border-t border-gray-200 pt-4">
-              <p className="text-sm text-gray-600">
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 Don&apos;t have an account?{" "}
                 <Link
                   to="/signup"
-                  className="text-emerald-600 hover:text-emerald-700 font-semibold"
+                  className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 font-semibold"
                 >
                   Sign Up
                 </Link>

@@ -25,7 +25,7 @@ const initialBillingData = [
     month: "March",
     amount: 16500,
     status: "unpaid",
-    dueDate: "2026-03-31",
+    dueDate: "2026-09-31",
     usage: 220,
   },
   {
