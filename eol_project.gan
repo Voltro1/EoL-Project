@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2026-04-27" view-index="0" version="3.4.3392" locale="en_US">
+    <description/>
+    <view zooming-state="default:0" id="gantt-chart">
+        <field id="tpd3" name="Name" width="198" order="0"/>
+        <field id="tpd4" name="Begin date" width="74" order="1"/>
+        <field id="tpd5" name="End date" width="75" order="2"/>
+        <field id="tpd15" name="Notes" width="20" order="3"/>
+        <option id="filter.completedTasks" value="false"/>
+        <option id="filter.dueTodayTasks" value="false"/>
+        <option id="filter.overdueTasks" value="false"/>
+        <option id="filter.inProgressTodayTasks" value="false"/>
+        <option id="divider" value="0.22799479166666667"/>
+        <filters>
+            <filter title="filter.completedTasks" description="" is-built-in="true" is-enabled="false"/>
+            <filter title="filter.dueTodayTasks" description="" is-built-in="true" is-enabled="false"/>
+            <filter title="filter.overdueTasks" description="" is-built-in="true" is-enabled="false"/>
+            <filter title="filter.inProgressTodayTasks" description="" is-built-in="true" is-enabled="false"/>
+        </filters>
+        <option id="color.recent"><![CDATA[#008080 #99cccc #00ffff #663366 #800080 #b3b31a #ffff00 #008000 #00ff00 #808080]]></option>
+    </view>
+    <view id="resource-table">
+        <field id="0" name="Name" width="549" order="0"/>
+        <field id="1" name="Default role" width="206" order="1"/>
+    </view>
+    <!-- -->
+    <calendars>
+        <day-types>
+            <day-type id="0"/>
+            <day-type id="1"/>
+            <default-week id="1" name="default" sun="1" mon="0" tue="0" wed="0" thu="0" fri="0" sat="1"/>
+            <only-show-weekends value="false"/>
+            <overriden-day-types/>
+            <days/>
+        </day-types>
+    </calendars>
+    <tasks empty-milestones="true">
+        <taskproperties>
+            <taskproperty id="tpd0" name="type" type="default" valuetype="icon"/>
+            <taskproperty id="tpd1" name="priority" type="default" valuetype="icon"/>
+            <taskproperty id="tpd2" name="info" type="default" valuetype="icon"/>
+            <taskproperty id="tpd3" name="name" type="default" valuetype="text"/>
+            <taskproperty id="tpd4" name="begindate" type="default" valuetype="date"/>
+            <taskproperty id="tpd5" name="enddate" type="default" valuetype="date"/>
+            <taskproperty id="tpd6" name="duration" type="default" valuetype="int"/>
+            <taskproperty id="tpd7" name="completion" type="default" valuetype="int"/>
+            <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
+            <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
+        </taskproperties>
+        <task id="23" uid="86639dab020d487da8f0de5906442ead" name="Sprint 1" meeting="false" start="2026-05-01" duration="1" complete="0" expand="false">
+            <depend id="24" type="2" difference="0" hardness="Strong"/>
+            <task id="4" uid="d7a4acd0f14e40559a411f3eb4b1121d" name="Configuration Page" color="#800080" meeting="false" start="2026-05-01" duration="1" complete="0" priority="2" expand="false">
+                <depend id="36" type="2" difference="0" hardness="Strong"/>
+                <task id="20" uid="a19d6af6b9734d57a4e589d1f7ed343a" name="Configuration Page Interface" color="#663366" meeting="false" start="2026-05-01" duration="1" complete="0" priority="4" expand="true"/>
+                <task id="21" uid="6d6bef0812de4d69add58bc765e191c6" name="Profile Mini Page" color="#663366" meeting="false" start="2026-05-01" duration="1" complete="0" expand="true"/>
+                <task id="22" uid="121a625d495a4403ab593530b51b4f63" name="Logout/Deletion" color="#663366" meeting="false" start="2026-05-01" duration="1" complete="0" priority="2" expand="true"/>
+            </task>
+            <task id="3" uid="35cd201ee6444398b01fc702444a9be1" name="Services Page" color="#ffff00" meeting="false" start="2026-05-01" duration="1" complete="0" priority="0" expand="false">
+                <depend id="33" type="2" difference="0" hardness="Strong"/>
+                <task id="17" uid="f942b6f193ec4ef0af25a0af28893b15" name="Services Page Interface" color="#b3b31a" meeting="false" start="2026-05-01" duration="1" complete="0" priority="4" expand="true"/>
+                <task id="18" uid="9cc0818e9503472faba332e58aa3b062" name="Functional Chat" color="#b3b31a" meeting="false" start="2026-05-01" duration="1" complete="0" priority="2" expand="true"/>
+                <task id="19" uid="2eba8ec1d48a4853a3b4d0f6984977b4" name="Chat Bot" color="#b3b31a" meeting="false" start="2026-05-01" duration="1" complete="0" priority="2" expand="true"/>
+            </task>
+            <task id="2" uid="8f1d9fcd841d4d9c914f88d9e3606d53" name="Finance Page" color="#00ff00" meeting="false" start="2026-05-01" duration="1" complete="0" expand="false">
+                <depend id="30" type="2" difference="0" hardness="Strong"/>
+                <task id="13" uid="5b963dc5ebcf4973bb39dda491aee29f" name="Finance Page Interface" color="#008000" meeting="false" start="2026-05-01" duration="1" complete="0" priority="2" expand="true"/>
+                <task id="14" uid="334648da48ea44ab97ee3097e3708a22" name="Bill Details" color="#008000" meeting="false" start="2026-05-01" duration="1" complete="0" priority="4" expand="true"/>
+                <task id="15" uid="73618a7b92d84624b12c21994d2dde1d" name="Bill History" color="#008000" meeting="false" start="2026-05-01" duration="1" complete="0" expand="true"/>
+            </task>
+            <task id="1" uid="7b943636795342d1bedab57d33a7a1ee" name="Main Page" color="#ff0000" meeting="false" start="2026-05-01" duration="1" complete="0" priority="4" expand="false">
+                <depend id="25" type="2" difference="0" hardness="Strong"/>
+                <task id="6" uid="2b78270cdc064e9c8e9fc5b1bc6c06b8" name="Login Page" color="#b31a1a" meeting="false" start="2026-05-01" duration="1" complete="0" expand="true"/>
+                <task id="8" uid="0595458c64bd4416a85efcbc37c570a6" name="Sign Up Page" color="#b31a1a" meeting="false" start="2026-05-01" duration="1" complete="0" priority="4" expand="true"/>
+                <task id="11" uid="647414a6b90643959d742e86e2bcc3c5" name="Main Page Interface" color="#b31a1a" meeting="false" start="2026-05-01" duration="1" complete="0" priority="2" expand="true"/>
+                <task id="12" uid="070791478a204de297fc13b9e836e861" name="Random Value Meter" color="#b31a1a" meeting="false" start="2026-05-01" duration="1" complete="0" priority="0" expand="true"/>
+            </task>
+        </task>
+        <task id="24" uid="9d591558d8e744d188d293b5e226bc80" name="Sprint 2" color="#808080" meeting="false" start="2026-05-04" duration="1" complete="0" expand="true">
+            <task id="39" uid="f339d24f08c84b10aa0a25f9a7a27d4f" name="Privacy and Security" color="#00ffff" meeting="false" start="2026-05-04" duration="1" complete="0" priority="4" expand="false">
+                <task id="40" uid="82c7d44b44a44a47bab93588bff3a2bd" name="Account Information Privacy" color="#008080" meeting="false" start="2026-05-04" duration="1" complete="0" priority="4" expand="true"/>
+                <task id="41" uid="ce49351bf9b74728a684a069478673ef" name="Bill Details/History Privacy" color="#008080" meeting="false" start="2026-05-04" duration="1" complete="0" priority="4" expand="true"/>
+                <task id="42" uid="e63dd2f668a94608af5c30d22c1b1c05" name="Payment Information Privacy" color="#008080" meeting="false" start="2026-05-04" duration="1" complete="0" priority="4" expand="true"/>
+                <task id="43" uid="5303f7dc1d854daca4d5257432306bc1" name="Chat Privacy" color="#008080" meeting="false" start="2026-05-04" duration="1" complete="0" priority="4" expand="true"/>
+            </task>
+            <task id="36" uid="9de5fb5e48f14551a0ba63aca7d6ba98" name="Configuration Page Extras" color="#800080" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="false">
+                <task id="37" uid="fcdef5c56fb94ceb9bdbd28a1fcab244" name="Saving Preferences" color="#663366" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+                <task id="38" uid="bc564e01898547ed85b9200c4b447afb" name="Security Measures" color="#663366" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+            </task>
+            <task id="33" uid="623f491cba634ec6aab93e60e8e95dd1" name="Services Page Extras" color="#ffff00" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="false">
+                <task id="34" uid="70d7f789a0ef40f6b888e786e90fa700" name="Extra Help Menu" color="#b3b31a" meeting="false" start="2026-05-04" duration="1" complete="0" expand="true"/>
+                <task id="35" uid="43ef789bcb264173a67aee5d7421efdc" name="Feedback" color="#b3b31a" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+            </task>
+            <task id="30" uid="10777a219f984d4da5db74caa54653e1" name="Finance Page Extras" color="#00ff00" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="false">
+                <task id="31" uid="85dd784ee77746be9cd6b946e2de3e08" name="Virtual Payment Options" color="#008000" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+                <task id="32" uid="3f36894ee1314c45866d1de705293825" name="Payment History" color="#008000" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+            </task>
+            <task id="25" uid="d4ffd64aea7e4fb2a9c079cce27de90b" name="Main Page Extras" color="#ff0000" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="false">
+                <task id="26" uid="9cfa14fe17ed4618adebf995e2412ecf" name="Dawle Status" color="#b31a1a" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+                <task id="27" uid="a63de1e67e844241a5937205a05547ae" name="Maintenance Callout Board" color="#b31a1a" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+                <task id="28" uid="edf98bd403554091880dfc7e1ea94679" name="Daily Usage/Monthly Usage" color="#b31a1a" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+                <task id="29" uid="97465376a0e1485b87cc99da9e446055" name="Advertisement Space" color="#b31a1a" meeting="false" start="2026-05-04" duration="1" complete="0" priority="0" expand="true"/>
+            </task>
+        </task>
+    </tasks>
+    <resources/>
+    <allocations/>
+    <vacations/>
+    <previous/>
+    <roles roleset-name="Default"/>
+</project>
